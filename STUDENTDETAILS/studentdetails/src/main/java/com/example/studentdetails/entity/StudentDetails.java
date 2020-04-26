@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "studentsdetails")
@@ -14,6 +15,7 @@ public class StudentDetails {
 	@GeneratedValue
 	long id;	
 	@Column
+	@NotNull
 	String name;
 	@Column
 	String address;
@@ -29,7 +31,11 @@ public class StudentDetails {
 	String country;
 	@Column
 	String companyname;
+	@Column
+	@NotNull
+	String password;
 	
+
 	public StudentDetails()
 	{
 		super();
@@ -106,6 +112,15 @@ public class StudentDetails {
 	public void setEmailid(String emailid) {
 		this.emailid = emailid;
 	}
+	
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 
 	
 }

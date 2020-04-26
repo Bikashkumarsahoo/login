@@ -1,6 +1,4 @@
 package com.example.studentdetails.dto;
-
-import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
@@ -17,6 +15,7 @@ public class StudentDetailsDTO {
 	String state;
 	String country;
 	String companyname;
+	String password;
 	
 	public StudentDetailsDTO()
 	{
@@ -24,7 +23,7 @@ public class StudentDetailsDTO {
 	}
 	
 	public StudentDetailsDTO(long id,String name,String address,String phoneno,String city,String state,String country,String companyname,
-			String emailid)
+			String emailid,String password)
 	{
 		this();
 		this.id=id;
@@ -35,7 +34,8 @@ public class StudentDetailsDTO {
 		this.city=city;
 		this.state=state;
 		this.country=country;
-		this.companyname=companyname;		
+		this.companyname=companyname;	
+		this.password = password;
 	}
 	public long getId() {
 		return id;
@@ -94,6 +94,14 @@ public class StudentDetailsDTO {
 		this.emailid = emailid;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	@Override
 	public String toString() {
 		return "StudentDetailsDTO [name=" + name + ", address=" + address + ", phoneno=" + phoneno
@@ -103,16 +111,17 @@ public class StudentDetailsDTO {
 	
 	public StudentDetails createEntity()
 	{
-		System.out.println(2);
 		StudentDetails student= new StudentDetails();
 		student.setId(this.id);
 		student.setAddress(this.address);
 		student.setCity(this.city);
 		student.setCompanyname(this.companyname);
 		student.setName(this.name);
+		student.setState(this.state);
 		student.setEmailid(this.emailid);
 		student.setPhoneno(this.phoneno);
 		student.setCountry(this.country);
+		student.setPassword(this.password);
 		return student;
 	}
 }

@@ -2,6 +2,7 @@ package com.example.studentdetails.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,21 +16,31 @@ public class StudentDetailsService {
 
 	@Autowired
 	StudentDetailsRepository studentDetailsRepo;
-	public void createStudent(StudentDetailsDTO studentDetailsDTO)
+	public boolean createStudent(StudentDetailsDTO studentDetailsDTO) throws Exception
 	{
-		System.out.println(3);
-		StudentDetails student= studentDetailsDTO.createEntity();
-		System.out.println(student.getAddress());
-		studentDetailsRepo.save(student);
+		try
+		{
+			StudentDetails student= studentDetailsDTO.createEntity();
+			studentDetailsRepo.save(student);
+			return true;
+		}
+		catch (Exception e)
+		{
+			throw e;
+//			System.out.println(e.getMessage());
+		}
+
 	}
 	
 	public List<StudentDetailsDTO> getStudent()
 	{
-		List<StudentDetails> students = studentDetailsRepo.findAll(); 
-		List<StudentDetailsDTO> studentList= new ArrayList<StudentDetailsDTO>();
+		List<StudentDetails> students = studentDetailsRepo.findAll(); //fetch student details list
+		List<StudentDetailsDTO> studentList= new ArrayList<StudentDetailsDTO>();// convert student details DTO LIST
+		
 		for(StudentDetails studentsEntity: students)
 		{
 			StudentDetailsDTO studentDTO= new StudentDetailsDTO();
+			
 			studentDTO.setAddress(studentsEntity.getAddress());
 			studentDTO.setCity(studentsEntity.getCity());
 			studentDTO.setCompanyname(studentsEntity.getCompanyname());
@@ -39,8 +50,70 @@ public class StudentDetailsService {
 			studentDTO.setName(studentsEntity.getName());
 			studentDTO.setId(studentsEntity.getId());
 			studentDTO.setPhoneno(studentsEntity.getPhoneno());
+			studentDTO.setPassword(studentsEntity.getPassword());
+			
 			studentList.add(studentDTO);
 		}
 		return studentList; 
+	}
+	
+	public Optional<StudentDetails> getStudentbyId(long id)
+	{
+		Optional<StudentDetails> student= studentDetailsRepo.findById(id);
+		return student;
+	}
+	
+	public String deleteStudentbyId(long id)
+	{
+		try {
+			studentDetailsRepo.deleteById(id);
+			return "delete success with id "+id;
+				
+		}
+		catch(Exception e ) 
+		{
+			return e.getMessage();
+		}
+	}
+	
+	public Optional<StudentDetails> updateDetails(long id, StudentDetailsDTO studentDetailsDTO)
+	{
+		Optional<StudentDetails> student= studentDetailsRepo.findById(id);
+		student.get().setAddress(studentDetailsDTO.getAddress());
+		student.get().setCity(studentDetailsDTO.getCity());
+		student.get().setCompanyname(studentDetailsDTO.getCompanyname());
+		student.get().setCountry(studentDetailsDTO.getCountry());
+		student.get().setEmailid(studentDetailsDTO.getEmailid());
+		student.get().setName(studentDetailsDTO.getName());
+		student.get().setPhoneno(studentDetailsDTO.getPhoneno());
+		student.get().setState(studentDetailsDTO.getState());
+		student.get().setPassword(studentDetailsDTO.getPassword());	
+		//student details save in database
+		studentDetailsRepo.save(student.get());
+		return student;
+	}
+	
+	public boolean loginStudent(String emailid, String password)
+	{
+		List<StudentDetails> studentslist = studentDetailsRepo.findAll();
+		for(StudentDetails student:studentslist)
+		{
+			if(student.getEmailid().equals(emailid) && student.getPassword().equals(password))
+			{
+//				StudentDetailsDTO studentDetails=new StudentDetailsDTO();
+//				studentDetails.setAddress(student.getAddress());
+//				studentDetails.setCity(student.getCity());
+//				studentDetails.setCompanyname(student.getCompanyname());
+//				studentDetails.setCountry(student.getCountry());
+//				studentDetails.setEmailid(student.getEmailid());
+//				studentDetails.setId(student.getId());
+//				studentDetails.setPassword(student.getPassword());
+//				studentDetails.setPhoneno(student.getPhoneno());
+//				studentDetails.setState(student.getState());
+//				studentDetails.setName(student.getName());
+				return true;
+			}
+		}
+		return false;
 	}
 }
