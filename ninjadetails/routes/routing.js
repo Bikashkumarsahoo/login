@@ -5,6 +5,7 @@ const db = require('../src/utilities/connection');
 
 routing.get('/getNinjalist', (req, res , next) => {
         let NinjaList = [];
+        
         db.query('SELECT * FROM ninja',function(err,rows) {
             if(err)
             {
@@ -18,7 +19,7 @@ routing.get('/getNinjalist', (req, res , next) => {
                         NinjaList.push(rows[i]);
                     }
                    console.log("fetched");
-                    res.send(NinjaList);
+                    res.json(NinjaList);
                  } 
                 else 
                 {
@@ -30,13 +31,35 @@ routing.get('/getNinjalist', (req, res , next) => {
         });
 });
 
+routing.get('/login/:username/:password',  (req, res, next) => {
+    let username = req.params.username;
+    let password = req.params.password;
+    let sql="select * from ninja where (username='"+username+"' and password='"+ password+"')";
+    
+    db.query(sql,function(err,rows)
+    {
+        if(err)
+        {
+            console.log(err);
+            throw err;
+        }
+        else
+        {
+            res.send("login successful");
+        }
+    });
+});
+
+
 routing.post('/insertNinjalist', (req, res) => {
     console.log("request received for adding new ninja");
     let id = parseInt(req.body.id);
     let name = req.body.name;
+    let username=req.body.username;
+    let password=req.body.password;
     let address = req.body.address;
     let points = parseInt(req.body.points);
-    let data = {name:name, address:address, points:points};
+    let data = {name:name, username:username, password:password, address:address, points:points};
     let sql = "INSERT INTO ninja SET ?";
     db.query(sql,data,function(err,rows) {
         if(err){
@@ -80,3 +103,4 @@ routing.post('/updateNinjalist', (req, res) => {
     });
 });
 module.exports = routing; 
+
