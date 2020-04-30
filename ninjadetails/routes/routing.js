@@ -4,8 +4,8 @@ const dbModule = require('../src/model/dbModule');
 const db = require('../src/utilities/connection');
 
 routing.get('/getNinjalist', (req, res , next) => {
-        let NinjaList = [];
-        
+        // let list1=[]
+        let List=[];
         db.query('SELECT * FROM ninja',function(err,rows) {
             if(err)
             {
@@ -15,11 +15,42 @@ routing.get('/getNinjalist', (req, res , next) => {
             {
                  if (rows.length > 0) 
                  {
+                     
                     for(let i=0; i < rows.length; i++){
-                        NinjaList.push(rows[i]);
+                        // List[i]=[];
+                        List.push(rows[i]);
+                        db.query('SELECT * FROM weapon where ninjaid='+rows[i].id+'',function(err,rows1) {
+                            if(err)
+                            {
+                                list1.push(null);
+                            }
+                            else
+                            {
+                                if(rows1.length>0)
+                                {
+                                    // console.log(typeof(rows1));
+                                    // list1.push(rows1);
+                                    // console.log(rows1)
+                                    // console.log(list1)
+                                    list1=[]
+                                    for(let j=0;j<rows1.length;j++)
+                                    {
+                                       list1.push(rows1[j].weaponname);
+                                        // console.log(rows1[j].weaponid);
+                                        // List.push(rows1[j]);
+                                    }
+                                    console.log(list1);
+                                    // List[i].add("weapon",list1);
+                                    // console.log(i+"--------->" +List);
+
+                                }
+                                // List[i].push(list1);
+                                // list1=[];
+                            }
+                        });
                     }
                    console.log("fetched");
-                    res.json(NinjaList);
+                    res.json(List);
                  } 
                 else 
                 {
@@ -45,7 +76,7 @@ routing.get('/login/:username/:password',  (req, res, next) => {
         }
         else
         {
-            res.send("login successful");
+            res.json(1);
         }
     });
 });
