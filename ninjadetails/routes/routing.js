@@ -3,54 +3,47 @@ const routing = express.Router();
 const dbModule = require('../src/model/dbModule');
 const db = require('../src/utilities/connection');
 
+//All ninja details
 routing.get('/getNinjalist', (req, res , next) => {
-        // let list1=[]
         let List=[];
-        db.query('SELECT * FROM ninja',function(err,rows) {
+        db.query('SELECT * FROM ninja',function(err,ninjas) {
             if(err)
             {
                 console.log(err)
             }
             else
             {
-                 if (rows.length > 0) 
+                 if (ninjas.length > 0) 
                  {
-                     
-                    for(let i=0; i < rows.length; i++){
-                        // List[i]=[];
-                        List.push(rows[i]);
-                        db.query('SELECT * FROM weapon where ninjaid='+rows[i].id+'',function(err,rows1) {
+                    complete_count = 0
+                    for(let i=0; i < ninjas.length; i++)
+                    {
+                        let list1=[];
+                        db.query('SELECT * FROM weapon where ninjaid='+ninjas[i].id+'',function(err,weapons1) {
                             if(err)
                             {
                                 list1.push(null);
                             }
                             else
                             {
-                                if(rows1.length>0)
+                                if(weapons1.length>0)
                                 {
-                                    // console.log(typeof(rows1));
-                                    // list1.push(rows1);
-                                    // console.log(rows1)
-                                    // console.log(list1)
-                                    list1=[]
-                                    for(let j=0;j<rows1.length;j++)
+                                    for(let j=0;j<weapons1.length;j++)
                                     {
-                                       list1.push(rows1[j].weaponname);
-                                        // console.log(rows1[j].weaponid);
-                                        // List.push(rows1[j]);
+                                       list1.push(weapons1[j].weaponname);
                                     }
-                                    console.log(list1);
-                                    // List[i].add("weapon",list1);
-                                    // console.log(i+"--------->" +List);
-
+                                    
+                                }  
+                                complete_count = complete_count + 1;
+                                if(complete_count === ninjas.length){
+                                    res.json(List);                                    
                                 }
-                                // List[i].push(list1);
-                                // list1=[];
                             }
                         });
+                        ninjas[i].weapons = list1;
+                        List.push(ninjas[i]);
                     }
                    console.log("fetched");
-                    res.json(List);
                  } 
                 else 
                 {
@@ -62,12 +55,14 @@ routing.get('/getNinjalist', (req, res , next) => {
         });
 });
 
+
+// Loggin ninja details
 routing.get('/login/:username/:password',  (req, res, next) => {
     let username = req.params.username;
     let password = req.params.password;
     let sql="select * from ninja where (username='"+username+"' and password='"+ password+"')";
     
-    db.query(sql,function(err,rows)
+    db.query(sql,function(err,ninjadetails)
     {
         if(err)
         {
@@ -76,38 +71,118 @@ routing.get('/login/:username/:password',  (req, res, next) => {
         }
         else
         {
-            res.json(1);
+            res.json(ninjadetails);
         }
     });
 });
 
-
+//Inserting ninja details
 routing.post('/insertNinjalist', (req, res) => {
     console.log("request received for adding new ninja");
-    let id = parseInt(req.body.id);
-    let name = req.body.name;
-    let username=req.body.username;
-    let password=req.body.password;
-    let address = req.body.address;
-    let points = parseInt(req.body.points);
-    let data = {name:name, username:username, password:password, address:address, points:points};
-    let sql = "INSERT INTO ninja SET ?";
-    db.query(sql,data,function(err,rows) {
+    var obj=[
+    name = req.body.name,
+    username=req.body.username,
+    password=req.body.password,
+    address = req.body.address,
+    points = parseInt(req.body.points),
+    ]
+    var weapons=req.body.weapons;
+    let sql = "INSERT INTO ninja (name, username, password, address, points )  values(?,?,?,?,?)" ;
+    db.query(sql,obj,function(err,ninjaid) {
         if(err){
             throw err;
-            console.log(err)
         }
         else{
-            res.send("inserted");
+            ninjai=ninjaid.insertId;
+
+                let sql1 = "INSERT INTO weapon (weaponname,ninjaid)  values('"+weapons+"',"+ninjai+")"
+                db.query(sql1,function(err,weaponid) {
+                    if(err){
+                        throw err;
+                    }
+                    
+                });
+
+
+            res.send("inserted"+ninjai);
         }                         
     });
 });
 
-routing.post('/deleteNinjalist', (req, res) => {
-    console.log("request received for deleting new ninja");
-    let id = parseInt(req.body.id);
-    let sql = "DELETE FROM ninja WHERE id="+id+"";
+
+//Deleting ninja details
+routing.delete('/deleteNinjalist/:username', (req, res) => {
+    let username =req.params.username;
+    let sql1="DELETE FROM weapon WHERE ninjaid in (select id from ninja where username ='"+username+"')";
+    db.query(sql1,function(err,ninjas) {
+        if(err){
+            console.log(err)
+        }
+        else{
+            let sql = "DELETE FROM ninja WHERE username='"+username+"'";
+            db.query(sql,function(err,ninjas){
+                if(err)
+                {
+                    console.log(err);
+                }
+                
+            });
+            
+                res.send("deleted");
+            }                             
+    });
+});
+
+
+// Updating ninja 
+routing.post('/updateNinjalist', (req, res) => {
+    let username = req.body.username;
+    let name = req.body.name;
+    let address = req.body.address;
+    let points = parseInt(req.body.points);
+    let sql = "UPDATE ninja SET name='"+name+"', address='"+address+"', points='"+points+"' WHERE username='"+username+"'";
     db.query(sql,function(err,rows) {
+        if(err){
+            throw err;}
+        else{
+            res.send("updated");
+        }                  
+    });
+});
+
+
+//Inserting weapon
+routing.post('/insertWeaponlist/:username', (req, res) => {
+    let username = req.params.username;
+    let weapons = req.body.weaponname;
+    let sql="select id from ninja where username ='"+username+"'";
+    db.query(sql,function(err,ninjaid){
+        if(err)
+        {
+            throw err;
+        }
+        else{
+            ninjai=ninjaid[0].id;
+
+            let sql1 = "INSERT INTO weapon (weaponname,ninjaid)  values('"+weapons+"',"+ninjai+")"
+            db.query(sql1,function(err,weaponid) {
+                if(err){
+                  console.log(err);
+                }
+                else{
+                 res.send("weapons inserted");
+                }
+            });
+        }
+    });
+});
+
+//Deleting weapon
+routing.post('/deleteWeaponlist/:username', (req, res) => {
+    let username = req.params.username;
+    let weapons = req.body.weaponname;
+    let sql1="DELETE FROM weapon WHERE ninjaid in (select id from ninja where username='"+username+"') and weaponname='"+weapons+"'";
+    db.query(sql1,function(err,ninjas) {
         if(err){
             console.log(err)
         }
@@ -117,21 +192,37 @@ routing.post('/deleteNinjalist', (req, res) => {
     });
 });
 
-routing.post('/updateNinjalist', (req, res) => {
-    console.log("request received for updating new ninja");
-    let id = parseInt(req.body.id);
-    let name = req.body.name;
-    let address = req.body.address;
-    let points = parseInt(req.body.points);
-    let sql = "UPDATE ninja SET name='"+name+"', address='"+address+"', points='"+points+"' WHERE id="+id;
-    db.query(sql,function(err,rows) {
-        if(err){
+//Routing for fetch
+routing.get('/fetch/:username', (req, res , next) => {
+    let List=[];
+    let username=req.params.username;
+    let sql="SELECT * FROM ninja Where username='"+username+"'";
+    db.query(sql, function(err,ninjas) {
+        if(err)
+        {
             console.log(err)
         }
-        else{
-                res.send("updated");
-            }                             
+       
+        res.json(ninjas)
+                                  
     });
 });
+
+//fetching  weapons
+routing.get('/fetchWeaponlist/:username', (req, res , next) => {
+    let List=[];
+    let username=req.params.username;
+    let sql="select weaponname FROM weapon WHERE ninjaid in (select id from ninja where username ='"+username+"')";
+    db.query(sql, function(err,weapons) {
+        if(err)
+        {
+            console.log(err)
+        }
+       
+        res.json(weapons)
+                                  
+    });
+});
+
 module.exports = routing; 
 

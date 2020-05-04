@@ -1,0 +1,30 @@
+.card2 {
+    /* max-width: 300px;
+    margin-top: 15px;
+    margin-left: 1300px;
+    right: 1px;
+    width: 2000px;
+    height: 120px; */
+    font-size: 70px;
+    color: #ff9999;
+    text-align: left;
+  }
+
+
+  #card3{
+    color:	#99ffff;
+    position: relative;
+    animation-name:moving ;
+    animation-duration: 4s;
+    animation-delay: 1s;
+    animation-iteration-count:100;
+
+  }
+  
+  @keyframes moving {
+    0%{ left:0px; top: 0px;}
+
+	50%{ left:0px; top: 300px;}
+	
+	100%{left:0px; top: 0px;}
+  }
