@@ -1,51 +1,32 @@
 import ReactDOM from 'react-dom'
 import React, { Component } from 'react';
 import './App.css';
-import Mainleft from "./main-left.js";
 import Mainright from "./main-right.js";
-
-//import Split from 'react-split'
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
-
-// export default App;
-
-//  {
-//   render() {
-//     return (
-//       <div>
-       
-//       </div>
-//     );
-//   }
-// }
-
+import Login from "./login.js";
+import FetchUserDetails from "./FetchUserDetails";
+import  Loginform  from './loginform.js';
+import {Router,Switch,Route} from 'react-router-dom';
+import history from './history';
+import UserLogin from './userlogin';
+import Landing from './Landing';
+import AfterLogin from './afterlogin'
+import UpdateDetails from './updateDetails';
 class App extends Component{
+
   render(){
     return(
-      <div>
+      <>
+        <Router history={history}>
         <Mainright/>
-        <Mainleft/>
-      </div>
+          <Switch>
+            <Route path="/signup" component={Loginform}/>
+            <Route path="/userLogin" component={UserLogin}/>
+            <Route path="/afterlogin" component={AfterLogin}/>
+            <Route path="/updateDetails" component={UpdateDetails}/>
+            <Route path="/" component={Landing}/>
+          </Switch>
+        </Router>
+      </>
   );
   }
 }
