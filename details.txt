@@ -1,0 +1,2 @@
+localhost:8200//students/studentdetails
+ninja details:8080

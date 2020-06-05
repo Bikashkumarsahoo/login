@@ -1,11 +1,19 @@
 package com.example.studentdetails.entity;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import com.example.studentdetails.dto.AddressDTO;
 
 @Entity
 @Table(name = "studentsdetails")
@@ -18,23 +26,18 @@ public class StudentDetails {
 	@NotNull
 	String name;
 	@Column
-	String address;
-	@Column
 	String phoneno;
 	@Column
 	String emailid;
-	@Column
-	String city;
-	@Column
-	String state;
-	@Column
-	String country;
 	@Column
 	String companyname;
 	@Column
 	@NotNull
 	String password;
-	
+	@OneToMany(fetch = FetchType.LAZY,
+	        cascade = CascadeType.ALL)
+	@JoinColumn(name="studid")
+	List<Address> address;
 
 	public StudentDetails()
 	{
@@ -57,14 +60,6 @@ public class StudentDetails {
 		this.name = name;
 	}
 
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
 	public String getPhoneno() {
 		return phoneno;
 	}
@@ -73,28 +68,12 @@ public class StudentDetails {
 		this.phoneno = phoneno;
 	}
 
-	public String getCity() {
-		return city;
+	public List<Address> getAddress() {
+		return address;
 	}
 
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
+	public void setAddress(List<Address> address) {
+		this.address = address;
 	}
 
 	public String getCompanyname() {

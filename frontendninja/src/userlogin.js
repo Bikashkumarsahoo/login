@@ -61,10 +61,10 @@ export class UserLogin extends Component {
                 <form onSubmit={this.submitHandler}> 
                     <div class="container">
                          <label for="username"><b>Username</b></label><br/>
-                        <input type="text" placeholder="naruto" name="username" value={username} onChange={this.changeHandler}/>
+                        <input type="text" placeholder="e.g. naruto" name="username" value={username} onChange={this.changeHandler}/>
                              <br/>
                           <label for="password"><b>Password</b></label><br/>
-                             <input type="password" placeholder="Jma@123" name='password' value={password} onChange={this.changeHandler}/>
+                             <input type="password" placeholder="e.g. Jma@123" name='password' value={password} onChange={this.changeHandler}/>
                     </div>
                     <div class="container" >
                         <button type="submit">Login</button>

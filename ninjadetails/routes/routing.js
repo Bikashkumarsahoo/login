@@ -9,7 +9,7 @@ routing.get('/getNinjalist', (req, res , next) => {
         db.query('SELECT * FROM ninja',function(err,ninjas) {
             if(err)
             {
-                console.log(err)
+                throw err;
             }
             else
             {
@@ -116,7 +116,7 @@ routing.delete('/deleteNinjalist/:username', (req, res) => {
     let sql1="DELETE FROM weapon WHERE ninjaid in (select id from ninja where username ='"+username+"')";
     db.query(sql1,function(err,ninjas) {
         if(err){
-            console.log(err)
+            throw err;
         }
         else{
             let sql = "DELETE FROM ninja WHERE username='"+username+"'";
@@ -167,7 +167,7 @@ routing.post('/insertWeaponlist/:username', (req, res) => {
             let sql1 = "INSERT INTO weapon (weaponname,ninjaid)  values('"+weapons+"',"+ninjai+")"
             db.query(sql1,function(err,weaponid) {
                 if(err){
-                  console.log(err);
+                 throw err;
                 }
                 else{
                  res.send("weapons inserted");
@@ -200,7 +200,7 @@ routing.get('/fetch/:username', (req, res , next) => {
     db.query(sql, function(err,ninjas) {
         if(err)
         {
-            console.log(err)
+            throw err;
         }
        
         res.json(ninjas)
@@ -216,7 +216,7 @@ routing.get('/fetchWeaponlist/:username', (req, res , next) => {
     db.query(sql, function(err,weapons) {
         if(err)
         {
-            console.log(err)
+            throw err;
         }
        
         res.json(weapons)

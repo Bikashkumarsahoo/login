@@ -1,13 +1,14 @@
 package com.example.studentdetails.service;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.example.studentdetails.dto.StudentDetailsDTO;
+import com.example.studentdetails.entity.Address;
 import com.example.studentdetails.entity.StudentDetails;
 import com.example.studentdetails.repository.StudentDetailsRepository;
 
@@ -20,15 +21,35 @@ public class StudentDetailsService {
 	{
 		try
 		{
-			StudentDetails student= studentDetailsDTO.createEntity();
-			studentDetailsRepo.save(student);
+			StudentDetails student= new StudentDetails();
+			student.setId(studentDetailsDTO.getId());
+			student.setCompanyname(studentDetailsDTO.getCompanyname());
+			student.setPassword(studentDetailsDTO.getPassword());
+			student.setName(studentDetailsDTO.getName());
+			student.setEmailid(studentDetailsDTO.getEmailid());
+			student.setPhoneno(studentDetailsDTO.getPhoneno());
+			List<Address> addressList = studentDetailsDTO.getAddress();
+			List<Address> adrlist = new LinkedList();
+			for(Address address:addressList)
+			{
+				Address addressAdd = new Address();
+				addressAdd.setAddressid(address.getAddressid());
+				addressAdd.setAddressline1(address.getAddressline1());
+				addressAdd.setAddressline2(address.getAddressline2());
+				addressAdd.setCity(address.getCity());
+				addressAdd.setState(address.getState());
+				addressAdd.setCountry(address.getCountry());
+				adrlist.add(addressAdd);
+			}
+			student.setAddress(adrlist);
+			studentDetailsRepo.saveAndFlush(student);
 			return true;
 		}
-		catch (Exception e)
+		catch(Exception e)
 		{
 			throw e;
-//			System.out.println(e.getMessage());
 		}
+
 
 	}
 	
@@ -42,16 +63,12 @@ public class StudentDetailsService {
 			StudentDetailsDTO studentDTO= new StudentDetailsDTO();
 			
 			studentDTO.setAddress(studentsEntity.getAddress());
-			studentDTO.setCity(studentsEntity.getCity());
 			studentDTO.setCompanyname(studentsEntity.getCompanyname());
-			studentDTO.setCountry(studentsEntity.getCountry());
 			studentDTO.setEmailid(studentsEntity.getEmailid());
-			studentDTO.setState(studentsEntity.getState());
 			studentDTO.setName(studentsEntity.getName());
 			studentDTO.setId(studentsEntity.getId());
 			studentDTO.setPhoneno(studentsEntity.getPhoneno());
-			studentDTO.setPassword(studentsEntity.getPassword());
-			
+			studentDTO.setPassword(studentsEntity.getPassword());	
 			studentList.add(studentDTO);
 		}
 		return studentList; 
@@ -80,13 +97,10 @@ public class StudentDetailsService {
 	{
 		Optional<StudentDetails> student= studentDetailsRepo.findById(id);
 		student.get().setAddress(studentDetailsDTO.getAddress());
-		student.get().setCity(studentDetailsDTO.getCity());
 		student.get().setCompanyname(studentDetailsDTO.getCompanyname());
-		student.get().setCountry(studentDetailsDTO.getCountry());
 		student.get().setEmailid(studentDetailsDTO.getEmailid());
 		student.get().setName(studentDetailsDTO.getName());
 		student.get().setPhoneno(studentDetailsDTO.getPhoneno());
-		student.get().setState(studentDetailsDTO.getState());
 		student.get().setPassword(studentDetailsDTO.getPassword());	
 		//student details save in database
 		studentDetailsRepo.save(student.get());

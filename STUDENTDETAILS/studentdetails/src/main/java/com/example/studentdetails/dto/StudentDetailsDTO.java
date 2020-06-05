@@ -1,29 +1,26 @@
 package com.example.studentdetails.dto;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import java.util.List;
 
+
+import com.example.studentdetails.entity.Address;
 import com.example.studentdetails.entity.StudentDetails;
 
 public class StudentDetailsDTO {
 
 	long id;	
 	String name;
-	String address;
 	String emailid;
 	String phoneno;
-	String city;
-	String state;
-	String country;
 	String companyname;
 	String password;
+	List<Address> address;
 	
 	public StudentDetailsDTO()
 	{
 		super();
 	}
 	
-	public StudentDetailsDTO(long id,String name,String address,String phoneno,String city,String state,String country,String companyname,
-			String emailid,String password)
+	public StudentDetailsDTO(long id,String companyname,String emailid,String password, List<Address> address,String phoneno)
 	{
 		this();
 		this.id=id;
@@ -31,9 +28,6 @@ public class StudentDetailsDTO {
 		this.address=address;
 		this.phoneno=phoneno;
 		this.emailid=emailid;
-		this.city=city;
-		this.state=state;
-		this.country=country;
 		this.companyname=companyname;	
 		this.password = password;
 	}
@@ -49,35 +43,12 @@ public class StudentDetailsDTO {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getAddress() {
-		return address;
-	}
-	public void setAddress(String address) {
-		this.address = address;
-	}
+
 	public String getPhoneno() {
 		return phoneno;
 	}
 	public void setPhoneno(String phoneno) {
 		this.phoneno = phoneno;
-	}
-	public String getCity() {
-		return city;
-	}
-	public void setCity(String city) {
-		this.city = city;
-	}
-	public String getState() {
-		return state;
-	}
-	public void setState(String state) {
-		this.state = state;
-	}
-	public String getCountry() {
-		return country;
-	}
-	public void setCountry(String country) {
-		this.country = country;
 	}
 	public String getCompanyname() {
 		return companyname;
@@ -102,11 +73,18 @@ public class StudentDetailsDTO {
 		this.password = password;
 	}
 
+	public List<Address> getAddress() {
+		return address;
+	}
+
+	public void setAddress(List<Address> address) {
+		this.address = address;
+	}
+
 	@Override
 	public String toString() {
 		return "StudentDetailsDTO [name=" + name + ", address=" + address + ", phoneno=" + phoneno
-				+ ", emailid=" + emailid + ", city=" + city + ", state=" + state + ", country=" + country +
-				", companyname=" + companyname +"]";
+				+ ", emailid=" + emailid + ", companyname=" + companyname +"]";
 	}
 	
 	public StudentDetails createEntity()
@@ -114,13 +92,10 @@ public class StudentDetailsDTO {
 		StudentDetails student= new StudentDetails();
 		student.setId(this.id);
 		student.setAddress(this.address);
-		student.setCity(this.city);
 		student.setCompanyname(this.companyname);
 		student.setName(this.name);
-		student.setState(this.state);
 		student.setEmailid(this.emailid);
 		student.setPhoneno(this.phoneno);
-		student.setCountry(this.country);
 		student.setPassword(this.password);
 		return student;
 	}
